@@ -41,13 +41,26 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      enum: ['male', 'female', 'other'],
       default: null,
+      validate: {
+        validator: function (value) {
+          return value == null || ['male', 'female', 'other'].includes(value);
+        },
+        message: (props) => `${props.value} is not a valid gender`,
+      },
     },
     bloodGroup: {
       type: String,
-      enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
       default: null,
+      validate: {
+        validator: function (value) {
+          return (
+            value == null ||
+            ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].includes(value)
+          );
+        },
+        message: (props) => `${props.value} is not a valid blood group`,
+      },
     },
     address: {
       street: String,
