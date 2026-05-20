@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { Lock, Mail, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import AuthLayout from '../components/AuthLayout';
-import CaptchaField from '../components/CaptchaField';
 import { authAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { APP_NAME } from '../constants/brand';
@@ -14,11 +13,9 @@ export default function Login() {
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [captchaId, setCaptchaId] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    captchaAnswer: '',
   });
 
   const handleChange = (updates) => {
@@ -33,8 +30,6 @@ export default function Login() {
       const { data } = await authAPI.login({
         email: formData.email,
         password: formData.password,
-        captchaId,
-        captchaAnswer: formData.captchaAnswer,
       });
 
       if (data.success) {
@@ -43,7 +38,7 @@ export default function Login() {
         navigate('/');
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Login failed. Check credentials and CAPTCHA.');
+      toast.error(error.response?.data?.message || 'Login failed. Check your email and password.');
     } finally {
       setLoading(false);
     }
@@ -98,13 +93,6 @@ export default function Login() {
             </button>
           </div>
         </div>
-
-        <CaptchaField
-          captchaId={captchaId}
-          captchaAnswer={formData.captchaAnswer}
-          onCaptchaLoad={setCaptchaId}
-          onChange={handleChange}
-        />
 
         <div className="flex justify-end">
           <Link to="/forgot-password" className="text-sm text-cyan-400 hover:text-cyan-300 transition">

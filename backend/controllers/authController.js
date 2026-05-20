@@ -5,8 +5,7 @@ import { isMongoConnected } from '../config/database.js';
 import { jsonUserStore } from '../store/jsonUserStore.js';
 import { sendRegistrationWelcome } from '../services/notifyService.js';
 
-// In-memory CAPTCHA & OTP store (demo)
-const captchaStore = new Map();
+// In-memory OTP store (demo)
 const otpStore = new Map();
 
 const handleError = (res, error) => {
@@ -17,13 +16,6 @@ const handleError = (res, error) => {
 // @desc    Register user
 export const register = async (req, res) => {
   try {
-    const { captchaId, captchaAnswer } = req.body;
-    const captcha = captchaStore.get(captchaId);
-    if (!captcha || captcha.answer !== String(captchaAnswer).trim()) {
-      return res.status(400).json({ success: false, message: 'Invalid CAPTCHA. Please try again.' });
-    }
-    captchaStore.delete(captchaId);
-
     const { token, user } = await authService.register(req.body);
 
     sendRegistrationWelcome({
@@ -46,13 +38,6 @@ export const register = async (req, res) => {
 // @desc    Login user
 export const login = async (req, res) => {
   try {
-    const { captchaId, captchaAnswer } = req.body;
-    const captcha = captchaStore.get(captchaId);
-    if (!captcha || captcha.answer !== String(captchaAnswer).trim()) {
-      return res.status(400).json({ success: false, message: 'Invalid CAPTCHA. Please try again.' });
-    }
-    captchaStore.delete(captchaId);
-
     const { token, user } = await authService.login(req.body);
     res.status(200).json({
       success: true,
@@ -157,14 +142,6 @@ export const sendOtp = async (req, res) => {
   } catch (error) {
     handleError(res, error);
   }
-};
-
-export const getCaptcha = async (req, res) => {
-  const a = Math.floor(Math.random() * 9) + 1;
-  const b = Math.floor(Math.random() * 9) + 1;
-  const id = Math.random().toString(36).slice(2, 12);
-  captchaStore.set(id, { answer: String(a + b), expires: Date.now() + 300000 });
-  res.json({ success: true, captchaId: id, question: `${a} + ${b} = ?` });
 };
 
 export const forgotPassword = async (req, res) => {

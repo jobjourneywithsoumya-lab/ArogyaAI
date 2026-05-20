@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { User, Mail, Phone, Lock, CheckCircle, ArrowRight } from 'lucide-react';
 import AuthLayout from '../components/AuthLayout';
-import CaptchaField from '../components/CaptchaField';
 import { authAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { APP_NAME } from '../constants/brand';
@@ -13,14 +12,12 @@ export default function Register() {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [captchaId, setCaptchaId] = useState('');
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     mobileNumber: '',
     password: '',
     confirmPassword: '',
-    captchaAnswer: '',
   });
 
   const handleChange = (updates) => {
@@ -49,8 +46,6 @@ export default function Register() {
         mobileNumber: formData.mobileNumber,
         password: formData.password,
         confirmPassword: formData.confirmPassword,
-        captchaId,
-        captchaAnswer: formData.captchaAnswer,
       });
 
       if (data.success) {
@@ -161,13 +156,6 @@ export default function Register() {
             </div>
           </div>
         </div>
-
-        <CaptchaField
-          captchaId={captchaId}
-          captchaAnswer={formData.captchaAnswer}
-          onCaptchaLoad={setCaptchaId}
-          onChange={handleChange}
-        />
 
         <motion.button
           whileHover={{ scale: 1.01 }}

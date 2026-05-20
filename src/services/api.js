@@ -38,7 +38,6 @@ export const authAPI = {
   sendOtp: (data) => api.post('/api/auth/send-otp', data),
   forgotPassword: (data) => api.post('/api/auth/forgot-password', data),
   resetPassword: (data) => api.post('/api/auth/reset-password', data),
-  getCaptcha: () => api.get('/api/auth/captcha'),
 };
 
 export const symptomsAPI = {
