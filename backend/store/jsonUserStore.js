@@ -1,11 +1,10 @@
 import bcrypt from 'bcryptjs';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { join } from 'node:path';
 import { randomBytes } from 'node:crypto';
+import { getDataDir } from './dataPaths.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const USERS_PATH = join(__dirname, '..', 'users.json');
+const USERS_PATH = join(getDataDir(), 'users.json');
 
 const readUsers = async () => {
   try {

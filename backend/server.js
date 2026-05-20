@@ -14,12 +14,13 @@ import { startReminderScheduler } from './services/appointmentReminder.js';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { getDataDir } from './store/dataPaths.js';
 
 // Load environment variables
 dotenv.config();
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const DB_PATH = join(__dirname, 'db.json');
+const DB_PATH = join(getDataDir(), 'db.json');
 const PORT = process.env.PORT || 4000;
 
 // Initialize Express app
@@ -37,16 +38,17 @@ const allowedOrigins = [
   'http://127.0.0.1:5173',
   'http://127.0.0.1:5174',
   process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
-  process.env.NEXT_PUBLIC_VERCEL_URL,
+  process.env.VERCEL_BRANCH_URL,
 ].filter(Boolean);
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(null, true);
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.some((o) => origin === o || origin.startsWith(o))) {
+      return callback(null, true);
     }
+    if (origin.endsWith('.vercel.app')) return callback(null, true);
+    callback(null, true);
   },
   credentials: true,
 }));
@@ -56,7 +58,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // Connect to MongoDB (falls back to JSON store if unavailable)
-await connectDB();
+await connectDB().catch((err) => console.error('DB connect:', err.message));
 
 // Legacy JSON database functions for backward compatibility
 const defaultState = {

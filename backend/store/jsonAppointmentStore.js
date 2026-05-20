@@ -1,10 +1,9 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { join } from 'node:path';
 import { randomBytes } from 'node:crypto';
+import { getDataDir } from './dataPaths.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const APPT_PATH = join(__dirname, '..', 'appointments.json');
+const APPT_PATH = join(getDataDir(), 'appointments.json');
 
 const readAll = async () => {
   try {
