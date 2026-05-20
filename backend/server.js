@@ -57,8 +57,24 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
-// Connect to MongoDB (falls back to JSON store if unavailable)
-await connectDB().catch((err) => console.error('DB connect:', err.message));
+// Vercel: ensure /api prefix on request path for serverless routing
+app.use((req, res, next) => {
+  const url = req.url || '/';
+  if (process.env.VERCEL && !url.startsWith('/api')) {
+    req.url = `/api${url.startsWith('/') ? url : `/${url}`}`;
+  }
+  next();
+});
+
+// Connect to MongoDB (lazy — required for serverless cold starts)
+const dbReady = connectDB().catch((err) => {
+  console.error('DB connect:', err.message);
+  return null;
+});
+app.use(async (req, res, next) => {
+  await dbReady;
+  next();
+});
 
 // Legacy JSON database functions for backward compatibility
 const defaultState = {
@@ -104,7 +120,7 @@ const readDatabase = async () => {
 };
 
 const writeDatabase = async (state) => {
-  await mkdir(__dirname, { recursive: true });
+  await mkdir(dirname(DB_PATH), { recursive: true });
   await writeFile(DB_PATH, JSON.stringify(mergeWithDefaults(state), null, 2));
 };
 

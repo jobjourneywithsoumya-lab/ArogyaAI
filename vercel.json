@@ -3,8 +3,18 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "installCommand": "npm install",
+  "functions": {
+    "api/index.js": {
+      "maxDuration": 60,
+      "memory": 1024
+    },
+    "api/cron/reminders.js": {
+      "maxDuration": 60
+    }
+  },
   "rewrites": [
-    { "source": "/((?!api).*)", "destination": "/index.html" }
+    { "source": "/api/(.*)", "destination": "/api" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "crons": [
     {
