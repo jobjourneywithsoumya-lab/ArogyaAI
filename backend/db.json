@@ -1,0 +1,52 @@
+{
+  "cart": [],
+  "userRecords": [
+    {
+      "date": "2026-05-10",
+      "type": "Blood Test",
+      "status": "Completed",
+      "doctor": "Dr. Sarah Wilson",
+      "report": "Hemoglobin: 14.2 g/dL"
+    },
+    {
+      "date": "2026-04-15",
+      "type": "X-Ray",
+      "status": "Archived",
+      "doctor": "Dr. James Miller",
+      "report": "Chest X-ray clear"
+    },
+    {
+      "date": "2026-03-20",
+      "type": "Vaccination",
+      "status": "Completed",
+      "doctor": "Emergency-Boot Clinic",
+      "report": "Annual Flu Shot"
+    }
+  ],
+  "vitals": {
+    "heartRate": {
+      "value": 105,
+      "unit": "bpm",
+      "label": "Heart Rate"
+    },
+    "bloodPressure": {
+      "systolic": 145,
+      "diastolic": 95,
+      "unit": "mmHg",
+      "label": "Blood Pressure"
+    },
+    "bloodGlucose": {
+      "value": 180,
+      "unit": "mg/dL",
+      "label": "Blood Glucose"
+    },
+    "oxygen": {
+      "value": 94,
+      "unit": "%",
+      "label": "Oxygen (SpO2)"
+    }
+  },
+  "accessPassword": "1234",
+  "symptoms": null,
+  "diagnosis": null
+}
