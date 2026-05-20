@@ -66,10 +66,13 @@ app.use((req, res, next) => {
   next();
 });
 
-// Connect to MongoDB (lazy — required for serverless cold starts)
-const dbReady = connectDB().catch((err) => {
+// Connect to MongoDB (max 4s — never block requests indefinitely on Vercel)
+const dbReady = Promise.race([
+  connectDB(),
+  new Promise((resolve) => setTimeout(() => resolve(false), 4000)),
+]).catch((err) => {
   console.error('DB connect:', err.message);
-  return null;
+  return false;
 });
 app.use(async (req, res, next) => {
   await dbReady;

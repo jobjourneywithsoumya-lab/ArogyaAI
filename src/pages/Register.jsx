@@ -54,7 +54,13 @@ export default function Register() {
         navigate('/');
       }
     } catch (error) {
-      const msg = error.response?.data?.message || error.message || 'Registration failed';
+      let msg = error.response?.data?.message || error.message || 'Registration failed';
+      if (error.code === 'ECONNABORTED' || msg.includes('timeout')) {
+        msg = 'Server took too long. Redeploy Vercel or check /api/health — see DATA_STORAGE.md';
+      }
+      if (!error.response && error.message === 'Network Error') {
+        msg = 'Cannot reach API. Open /api/health on your site URL to test the backend.';
+      }
       toast.error(msg);
     } finally {
       setLoading(false);
